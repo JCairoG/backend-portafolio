@@ -1,6 +1,8 @@
-from flask import Flask,render_template,request,session
+from flask import Flask,render_template,session,flash,redirect,url_for
 
 from . import portafolio
+
+from .forms import ContactForm
 
 from app import fb
 
@@ -20,6 +22,20 @@ def portafolios():
 def acercade():
   return render_template('portafolio/acercade.html')
 
-@portafolio.route('/contacto')
+@portafolio.route('/contacto',methods=["GET","POST"])
 def contacto():
-  return render_template('portafolio/contacto.html')
+  contacto_form = ContactForm()
+  context = {'contacto_form': contacto_form}
+
+  if contacto_form.validate_on_submit():
+    dataContact = {
+      "nombre" : contacto_form.nombre.data,
+      "correo" : contacto_form.correo.data,
+      "telefono" : contacto_form.telefono.data,
+      "mensaje" : contacto_form.mensaje.data
+      }
+    result = fb.insertDocument('contacto', dataContact)
+    flash("Sus datos han sido registrados!")
+    return redirect(url_for('portafolio.index'))
+
+  return render_template('portafolio/contacto.html',**context)

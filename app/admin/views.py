@@ -35,7 +35,7 @@ def login():
       session['token'] = usuario['idToken']
       return redirect(url_for('admin.index'))
     except:
-      flash("Usuario o Paswword inválidos")
+      flash("Usuario o Password inválidos")
 
   return render_template('admin/login.html',**context)
 
